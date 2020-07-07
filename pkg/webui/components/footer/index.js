@@ -75,7 +75,7 @@ Footer.propTypes = {
   /** Optional link for documentation docs. */
   documentationLink: PropTypes.string,
   /** A flag specifying whether the application is connected to the internet. */
-  isOnline: PropTypes.bool.isRequired,
+  isOnline: PropTypes.bool,
   /**
    * A list of links to be displayed in the footer component.
    *
@@ -97,6 +97,7 @@ Footer.defaultProps = {
   documentationLink: undefined,
   links: [],
   supportLink: undefined,
+  isOnline: true,
 }
 
 export default Footer
