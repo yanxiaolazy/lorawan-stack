@@ -108,10 +108,18 @@ func New(c *component.Component, config *Config) (is *IdentityServer, err error)
 		store.ClientStore
 		store.OAuthStore
 	}{
-		UserStore:        store.GetUserStore(is.db),
-		UserSessionStore: store.GetUserSessionStore(is.db),
 		ClientStore:      store.GetClientStore(is.db),
 		OAuthStore:       store.GetOAuthStore(is.db),
+		UserStore:        store.GetUserStore(is.db),
+		UserSessionStore: store.GetUserSessionStore(is.db),
+	}, is.config.OAuth)
+
+	is.account = account.NewServer(is.Context(), struct {
+		store.UserStore
+		store.UserSessionStore
+	}{
+		UserStore:        store.GetUserStore(is.db),
+		UserSessionStore: store.GetUserSessionStore(is.db),
 	}, is.config.OAuth)
 
 	is.account = account.NewServer(is.Context(), struct {
