@@ -88,6 +88,7 @@ $RECYCLE.BIN/
 /release
 /.cache
 node_modules/
+!node_modules/go.mod
 /sdk/js/dist
 /public
 /stories
