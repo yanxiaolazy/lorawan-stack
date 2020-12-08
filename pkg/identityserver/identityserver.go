@@ -20,6 +20,7 @@ import (
 	"github.com/grpc-ecosystem/grpc-gateway/runtime"
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/postgres" // Postgres database driver.
+	"go.thethings.network/lorawan-stack/v3/api"
 	"go.thethings.network/lorawan-stack/v3/pkg/auth/rights"
 	"go.thethings.network/lorawan-stack/v3/pkg/cluster"
 	"go.thethings.network/lorawan-stack/v3/pkg/component"
@@ -47,6 +48,8 @@ type IdentityServer struct {
 	redis          *redis.Client
 	emailTemplates *email.TemplateRegistry
 	oauth          oauth.Server
+
+	api.UnimplementedIsServer
 }
 
 // Context returns the context of the Identity Server.
@@ -158,7 +161,7 @@ func (is *IdentityServer) withDatabase(ctx context.Context, f func(*gorm.DB) err
 
 // RegisterServices registers services provided by is at s.
 func (is *IdentityServer) RegisterServices(s *grpc.Server) {
-	ttnpb.RegisterIsServer(s, is)
+	api.RegisterIsServer(s, is)
 	ttnpb.RegisterEntityAccessServer(s, &entityAccess{IdentityServer: is})
 	ttnpb.RegisterApplicationRegistryServer(s, &applicationRegistry{IdentityServer: is})
 	ttnpb.RegisterApplicationAccessServer(s, &applicationAccess{IdentityServer: is})
