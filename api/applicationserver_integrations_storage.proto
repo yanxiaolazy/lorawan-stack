@@ -24,7 +24,7 @@ import "lorawan-stack/api/messages.proto";
 
 package ttn.lorawan.v3;
 
-option go_package = "go.thethings.network/lorawan-stack/v3/pkg/ttnpb";
+option go_package = "go.thethings.network/lorawan-stack/v3/api";
 
 message GetStoredApplicationUpRequest {
   // Query upstream messages from all end devices of an application. Cannot be used in conjunction with EndDeviceIdentifiers.

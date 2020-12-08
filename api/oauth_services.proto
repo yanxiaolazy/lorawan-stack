@@ -20,7 +20,7 @@ import "lorawan-stack/api/oauth.proto";
 
 package ttn.lorawan.v3;
 
-option go_package = "go.thethings.network/lorawan-stack/v3/pkg/ttnpb";
+option go_package = "go.thethings.network/lorawan-stack/v3/api";
 
 // The OAuthAuthorizationRegistry service, exposed by the Identity Server,
 // is used to manage OAuth client authorizations for users.

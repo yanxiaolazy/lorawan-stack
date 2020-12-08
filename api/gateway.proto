@@ -29,7 +29,7 @@ import "lorawan-stack/api/secrets.proto";
 
 package ttn.lorawan.v3;
 
-option go_package = "go.thethings.network/lorawan-stack/v3/pkg/ttnpb";
+option go_package = "go.thethings.network/lorawan-stack/v3/api";
 
 message GatewayBrand {
   string id = 1 [(gogoproto.customname) = "ID"];

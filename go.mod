@@ -42,7 +42,8 @@ require (
 	github.com/gobwas/glob v0.2.3
 	github.com/gogo/protobuf v1.3.1
 	github.com/golang/gddo v0.0.0-20200519224240-a4ebd2f7e574
-	github.com/golang/protobuf v1.3.5
+	github.com/golang/protobuf v1.4.3
+	github.com/google/go-cmp v0.5.4 // indirect
 	github.com/google/wire v0.4.0 // indirect
 	github.com/gorilla/csrf v1.7.0
 	github.com/gorilla/handlers v1.4.2
@@ -111,12 +112,16 @@ require (
 	golang.org/x/crypto v0.0.0-20200622213623-75b288015ac9
 	golang.org/x/image v0.0.0-20200430140353-33d19683fad8 // indirect
 	golang.org/x/mod v0.3.0 // indirect
-	golang.org/x/net v0.0.0-20201009032441-dbdefad45b89
+	golang.org/x/net v0.0.0-20201202161906-c7110b5ffcbb
 	golang.org/x/oauth2 v0.0.0-20200107190931-bf48bf16ab8d
 	golang.org/x/sync v0.0.0-20200317015054-43a5402ce75a
+	golang.org/x/sys v0.0.0-20201204225414-ed752295db88 // indirect
+	golang.org/x/text v0.3.4 // indirect
+	golang.org/x/xerrors v0.0.0-20200804184101-5ec99f83aff1 // indirect
 	google.golang.org/api v0.24.0
-	google.golang.org/genproto v0.0.0-20200513103714-09dca8ec2884
-	google.golang.org/grpc v1.32.0
+	google.golang.org/genproto v0.0.0-20201207150747-9ee31aac76e7
+	google.golang.org/grpc v1.34.0
+	google.golang.org/protobuf v1.25.0
 	gopkg.in/DATA-DOG/go-sqlmock.v1 v1.0.0-00010101000000-000000000000 // indirect
 	gopkg.in/alexcesaro/quotedprintable.v3 v3.0.0-20150716171945-2caba252f4dc // indirect
 	gopkg.in/check.v1 v1.0.0-20200227125254-8fa46927fb4f // indirect
