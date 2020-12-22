@@ -16,6 +16,7 @@
 package lbslns
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"math"
@@ -40,16 +41,27 @@ var errFrequencyPlan = errors.DefineInvalidArgument("frequency_plan", "invalid f
 // [2] -> DNONLY (Downlink Only; 1 = true, 0 = false)
 type DataRates [16][3]int
 
+// lbsSX1301Config contains the configuration for the SX1301 concentrator for the LoRa Basics Station `router_config` message.
+// This structure incorporates modifications for the `v1.5` and `v2` concentrator reference.
+type lbsSX1301Config struct {
+	ClockSource         uint8
+	LBTConfig           *shared.LBTConfig
+	Radios              []shared.RFConfig
+	Channels            []shared.IFConfig
+	LoRaStandardChannel *shared.IFConfig
+	FSKChannel          *shared.IFConfig
+}
+
 // RouterConfig contains the router configuration.
 // This message is sent by the Gateway Server.
 type RouterConfig struct {
-	NetID          []int                 `json:"NetID"`
-	JoinEUI        [][]int               `json:"JoinEui"`
-	Region         string                `json:"region"`
-	HardwareSpec   string                `json:"hwspec"`
-	FrequencyRange []int                 `json:"freq_range"`
-	DataRates      DataRates             `json:"DRs"`
-	SX1301Config   []shared.SX1301Config `json:"sx1301_conf"`
+	NetID          []int             `json:"NetID"`
+	JoinEUI        [][]int           `json:"JoinEui"`
+	Region         string            `json:"region"`
+	HardwareSpec   string            `json:"hwspec"`
+	FrequencyRange []int             `json:"freq_range"`
+	DataRates      DataRates         `json:"DRs"`
+	SX1301Config   []lbsSX1301Config `json:"sx1301_conf"`
 
 	// These are debug options to be unset in production gateways.
 	NoCCA       bool `json:"nocca"`
@@ -69,6 +81,65 @@ func (conf RouterConfig) MarshalJSON() ([]byte, error) {
 		Type:  "router_config",
 		Alias: Alias(conf),
 	})
+}
+
+type kv struct {
+	key   string
+	value interface{}
+}
+
+type orderedMap struct {
+	kv []kv
+}
+
+func (m *orderedMap) add(k string, v interface{}) {
+	m.kv = append(m.kv, kv{key: k, value: v})
+}
+
+func (m orderedMap) MarshalJSON() ([]byte, error) {
+	var b bytes.Buffer
+	b.WriteString("{")
+	for i, kv := range m.kv {
+		if i != 0 {
+			b.WriteString(",")
+		}
+		key, err := json.Marshal(kv.key)
+		if err != nil {
+			return nil, err
+		}
+		b.Write(key)
+		b.WriteString(":")
+		val, err := json.Marshal(kv.value)
+		if err != nil {
+			return nil, err
+		}
+		b.Write(val)
+	}
+	b.WriteString("}")
+	return b.Bytes(), nil
+}
+
+// MarshalJSON implements json.Marshaler.
+func (c lbsSX1301Config) MarshalJSON() ([]byte, error) {
+	var m orderedMap
+	// m.add("lorawan_public", c.LoRaWANPublic)
+	m.add("clksrc", c.ClockSource)
+	if c.LBTConfig != nil {
+		m.add("lbt_cfg", *c.LBTConfig)
+	}
+	for i, radio := range c.Radios {
+		m.add(fmt.Sprintf("radio_%d", i), radio)
+	}
+	for i, channel := range c.Channels {
+		m.add(fmt.Sprintf("chan_multiSF_%d", i), channel)
+	}
+	if c.LoRaStandardChannel != nil {
+		m.add("chan_Lora_std", *c.LoRaStandardChannel)
+	}
+	if c.FSKChannel != nil {
+		m.add("chan_FSK", *c.FSKChannel)
+	}
+	return json.Marshal(m)
 }
 
 // GetRouterConfig returns the routerconfig message to be sent to the gateway.
@@ -112,19 +183,28 @@ func GetRouterConfig(bandID string, fps map[string]*frequencyplans.FrequencyPlan
 	conf.NoDwellTime = !isProd
 
 	for _, fp := range fps {
-		sx1301Conf, err := shared.BuildSX1301Config(fp)
-		// These fields are not defined in the v1.5 ref design https://doc.sm.tc/station/gw_v1.5.html#rfconf-object and would cause a parsing error.
-		sx1301Conf.Radios[0].TxFreqMin = 0
-		sx1301Conf.Radios[0].TxFreqMax = 0
-		// Remove hardware specific values that are not necessary.
-		sx1301Conf.TxLUTConfigs = nil
-		for i := range sx1301Conf.Radios {
-			sx1301Conf.Radios[i].Type = ""
-		}
+		sx1301Config, err := shared.BuildSX1301Config(fp)
 		if err != nil {
 			return RouterConfig{}, err
 		}
-		conf.SX1301Config = append(conf.SX1301Config, *sx1301Conf)
+		lbsSX1301Config := lbsSX1301Config{
+			ClockSource:         sx1301Config.ClockSource,
+			LBTConfig:           sx1301Config.LBTConfig,
+			LoRaStandardChannel: sx1301Config.LoRaStandardChannel,
+			FSKChannel:          sx1301Config.FSKChannel,
+		}
+		for _, channel := range sx1301Config.Channels {
+			lbsSX1301Config.Channels = append(lbsSX1301Config.Channels, channel)
+		}
+		for i, radio := range sx1301Config.Radios {
+			if i == 0 {
+				radio.TxFreqMin = 0
+				radio.TxFreqMax = 0
+			}
+			radio.Type = ""
+			lbsSX1301Config.Radios = append(lbsSX1301Config.Radios, radio)
+		}
+		conf.SX1301Config = append(conf.SX1301Config, lbsSX1301Config)
 	}
 
 	// Add the MuxTime for RTT measurement.
