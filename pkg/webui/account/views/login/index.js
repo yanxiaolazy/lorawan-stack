@@ -140,7 +140,6 @@ const Login = () => {
               component={SubmitButton}
               message={sharedMessages.login}
               className={style.submitButton}
-              alwaysEnabled
             />
             <Button.Link
               to={`/register${location.search}`}
@@ -148,7 +147,12 @@ const Login = () => {
               message={m.createAccount}
               className={style.registerButton}
             />
-            <Button.Link naked secondary message={m.forgotPassword} to="/forgot-password" />
+            <Button.Link
+              naked
+              secondary
+              message={m.forgotPassword}
+              to={`/forgot-password${location.search}`}
+            />
           </div>
         </Form>
       </div>
