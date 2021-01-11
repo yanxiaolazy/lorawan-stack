@@ -41,15 +41,27 @@ var errFrequencyPlan = errors.DefineInvalidArgument("frequency_plan", "invalid f
 // [2] -> DNONLY (Downlink Only; 1 = true, 0 = false)
 type DataRates [16][3]int
 
+// rfConfig contains the configuration for one of the radios.
+type rfConfig struct {
+	Enable    bool   `json:"enable"`
+	Frequency uint64 `json:"freq"`
+}
+
+// ifConfig contains the configuration for one of the channels.
+type ifConfig struct {
+	Enable  bool  `json:"enable"`
+	Radio   uint8 `json:"radio"`
+	IFValue int32 `json:"if"`
+}
+
 // lbsSX1301Config contains the configuration for the SX1301 concentrator for the LoRa Basics Station `router_config` message.
 // This structure incorporates modifications for the `v1.5` and `v2` concentrator reference.
 type lbsSX1301Config struct {
-	ClockSource         uint8
 	LBTConfig           *shared.LBTConfig
-	Radios              []shared.RFConfig
+	Radios              []rfConfig
 	Channels            []shared.IFConfig
 	LoRaStandardChannel *shared.IFConfig
-	FSKChannel          *shared.IFConfig
+	FSKChannel          *ifConfig
 }
 
 // RouterConfig contains the router configuration.
@@ -122,11 +134,6 @@ func (m orderedMap) MarshalJSON() ([]byte, error) {
 // MarshalJSON implements json.Marshaler.
 func (c lbsSX1301Config) MarshalJSON() ([]byte, error) {
 	var m orderedMap
-	// m.add("lorawan_public", c.LoRaWANPublic)
-	m.add("clksrc", c.ClockSource)
-	if c.LBTConfig != nil {
-		m.add("lbt_cfg", *c.LBTConfig)
-	}
 	for i, radio := range c.Radios {
 		m.add(fmt.Sprintf("radio_%d", i), radio)
 	}
@@ -187,22 +194,25 @@ func GetRouterConfig(bandID string, fps map[string]*frequencyplans.FrequencyPlan
 		if err != nil {
 			return RouterConfig{}, err
 		}
+
 		lbsSX1301Config := lbsSX1301Config{
-			ClockSource:         sx1301Config.ClockSource,
 			LBTConfig:           sx1301Config.LBTConfig,
 			LoRaStandardChannel: sx1301Config.LoRaStandardChannel,
-			FSKChannel:          sx1301Config.FSKChannel,
+			FSKChannel: &ifConfig{
+				Enable:  sx1301Config.FSKChannel.Enable,
+				IFValue: sx1301Config.FSKChannel.IFValue,
+				Radio:   sx1301Config.FSKChannel.Radio,
+			},
 		}
 		for _, channel := range sx1301Config.Channels {
 			lbsSX1301Config.Channels = append(lbsSX1301Config.Channels, channel)
 		}
-		for i, radio := range sx1301Config.Radios {
-			if i == 0 {
-				radio.TxFreqMin = 0
-				radio.TxFreqMax = 0
+		for _, radio := range sx1301Config.Radios {
+			bsRadio := rfConfig{
+				Enable:    radio.Enable,
+				Frequency: radio.Frequency,
 			}
-			radio.Type = ""
-			lbsSX1301Config.Radios = append(lbsSX1301Config.Radios, radio)
+			lbsSX1301Config.Radios = append(lbsSX1301Config.Radios, bsRadio)
 		}
 		conf.SX1301Config = append(conf.SX1301Config, lbsSX1301Config)
 	}
