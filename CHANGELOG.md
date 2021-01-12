@@ -24,6 +24,7 @@ For details about compatibility between different releases, see the **Commitment
 - Improved Network Server matching performance.
 - Network Server matching mapping in the database.
   - This requires a database migration (`ttn-lw-stack ns-db migrate`).
+- JavaScript entrypoints changed from `oauth.css` and `oauth.js` to `account.css` and `account.css`. Note: For deployments using custom frontend bundles (e.g. via `--is.oauth.ui.js-file`), the filenames have to be updated accordingly as well.
 
 ### Deprecated
 
