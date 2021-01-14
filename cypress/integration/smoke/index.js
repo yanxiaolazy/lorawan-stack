@@ -16,5 +16,16 @@ import registrationTests from './registration'
 import applicationTests from './applications'
 import featureToggleTests from './feature-toggles'
 import gatewayTests from './gateways'
+import forgotPasswordTests from './forgot-password'
+import contactInfoValidationTests from './contact-info-validation'
+import authorizationTests from './authorization'
 
-export default [...registrationTests, ...applicationTests, ...featureToggleTests, ...gatewayTests]
+export default [
+  ...registrationTests,
+  ...applicationTests,
+  ...featureToggleTests,
+  ...gatewayTests,
+  ...forgotPasswordTests,
+  ...contactInfoValidationTests,
+  ...authorizationTests,
+]
