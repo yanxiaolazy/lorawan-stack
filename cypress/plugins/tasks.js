@@ -13,9 +13,19 @@
 // limitations under the License.
 
 const { execSync } = require('child_process')
+const fs = require('fs')
 
+const { Client } = require('pg')
 const yaml = require('js-yaml')
 const codeCoverageTask = require('@cypress/code-coverage/task')
+
+const client = new Client({
+  user: 'root',
+  host: 'localhost',
+  database: 'ttn_lorawan_dev',
+  port: 26257,
+})
+client.connect()
 
 // `stackConfigTask` sources stack configuration entires to `Cypress` configuration while preserving
 // all entries from `cypress.json`.
@@ -58,7 +68,31 @@ const stackConfigTask = (_, config) => {
   }
 }
 
+const sqlTask = (on, _) => {
+  on('task', {
+    execSql: sql => {
+      return client.query(sql)
+    },
+  })
+}
+
+const stackLogTask = (on, _) => {
+  on('task', {
+    getStackLog: () => {
+      return fs.readFileSync('.cache/devStack.log', 'utf8')
+    },
+    getLastLogLineMatching: regExp => {
+      const log = fs.readFileSync('.cache/devStack.log', 'utf8')
+      const results = Array.from(log.matchAll(new RegExp(regExp, 'gm')))
+
+      return results ? results.pop()[0] : undefined
+    },
+  })
+}
+
 module.exports = {
   stackConfigTask,
   codeCoverageTask,
+  sqlTask,
+  stackLogTask,
 }
