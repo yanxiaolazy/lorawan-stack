@@ -32,6 +32,25 @@ var (
 			return config.DR.Initialize(ctx, config.Blob, overwrite)
 		},
 	}
+	drBuildCommand = &cobra.Command{
+		Use:   "build",
+		Short: "Build Device Repository package file",
+		RunE: func(cmd *cobra.Command, args []string) error {
+			return config.DR.Build(ctx, config.Blob)
+		},
+	}
+	drTestCommand = &cobra.Command{
+		Use:   "test",
+		Short: "Build Device Repository package file",
+		RunE: func(cmd *cobra.Command, args []string) error {
+			_, err := config.DR.NewStore(ctx, config.Blob)
+			if err != nil {
+				return err
+			}
+			// fmt.Println(s)
+			return nil
+		},
+	}
 )
 
 func init() {
@@ -39,4 +58,6 @@ func init() {
 
 	drInitCommand.Flags().Bool("overwrite", true, "Overwrite existing index files")
 	drDBCommand.AddCommand(drInitCommand)
+	drDBCommand.AddCommand(drBuildCommand)
+	drDBCommand.AddCommand(drTestCommand)
 }

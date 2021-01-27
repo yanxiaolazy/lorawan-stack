@@ -21,6 +21,7 @@ import (
 	"go.thethings.network/lorawan-stack/v3/pkg/devicerepository/store"
 	"go.thethings.network/lorawan-stack/v3/pkg/devicerepository/store/bleve"
 	"go.thethings.network/lorawan-stack/v3/pkg/errors"
+	"go.thethings.network/lorawan-stack/v3/pkg/fetch"
 )
 
 // Config represents the DeviceRepository configuration.
@@ -60,4 +61,17 @@ func (c Config) Initialize(ctx context.Context, blobConf config.BlobConfig, over
 	}
 
 	return c.Store.Bleve.Initialize(ctx, c.Directory, overwrite)
+}
+
+// Build builds the Device Repository package file.
+func (c Config) Build(ctx context.Context, blobConf config.BlobConfig) error {
+	var f fetch.Interface
+	switch c.Source {
+	case "directory":
+		f = fetch.FromFilesystem(c.Directory)
+	default:
+		return errUnknownSource.WithAttributes("source", c.Source)
+	}
+
+	return c.Store.Bleve.Build(ctx, f)
 }

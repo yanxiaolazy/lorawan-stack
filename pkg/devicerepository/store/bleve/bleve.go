@@ -15,36 +15,25 @@
 package bleve
 
 import (
+	"bytes"
+	"compress/gzip"
 	"context"
-	"path"
-	"time"
+	"io/ioutil"
+	"path/filepath"
 
 	"github.com/blevesearch/bleve"
-	"github.com/bluele/gcache"
 	"go.thethings.network/lorawan-stack/v3/pkg/devicerepository/store"
-	"go.thethings.network/lorawan-stack/v3/pkg/devicerepository/store/remote"
-	"go.thethings.network/lorawan-stack/v3/pkg/errors"
-	"go.thethings.network/lorawan-stack/v3/pkg/fetch"
+	"go.thethings.network/lorawan-stack/v3/pkg/jsonpb"
 	"go.thethings.network/lorawan-stack/v3/pkg/log"
-)
-
-const (
-	// defaultTimeout is the timeout when trying to open the index. This is to avoid
-	// blocking on the index open call, which hangs indefinitely if the index is
-	// already in use by a different process.
-	defaultTimeout = 5 * time.Second
-
-	// cacheSize is the size of the cache for brands and models.
-	cacheSize = 1024
 )
 
 // bleveStore wraps a store.Store adding support for searching/sorting results using a bleve index.
 type bleveStore struct {
 	ctx context.Context
 
-	store store.Store
 	index bleve.Index
-	cache gcache.Cache
+
+	dr deviceRepository
 }
 
 // NewStore returns a new Device Repository store with indexing capabilities (using bleve).
@@ -53,50 +42,31 @@ func (c Config) NewStore(ctx context.Context) (store.Store, error) {
 	if err != nil {
 		return nil, err
 	}
-	s := &bleveStore{
-		ctx:   ctx,
-		store: remote.NewRemoteStore(fetch.FromFilesystem(wd)),
-
-		cache: gcache.New(cacheSize).LFU().Build(),
-	}
-
-	ctx, cancel := context.WithTimeout(s.ctx, defaultTimeout)
-	defer cancel()
-	s.index, err = openIndex(ctx, path.Join(wd, indexPath))
+	fileName := filepath.Join(wd, packageFile)
+	log.FromContext(ctx).WithField("file", fileName).Debug("Loading Device Repository package")
+	compressed, err := ioutil.ReadFile(filepath.Join(wd, packageFile))
 	if err != nil {
 		return nil, err
 	}
-	go func() {
-		<-s.ctx.Done()
-		if err := s.Close(); err != nil {
-			log.WithError(err).Warn("Failed to close index")
-		}
-	}()
-
-	return s, nil
-}
-
-var errCannotOpenIndex = errors.DefineNotFound("cannot_open_index", "cannot open index")
-
-func openIndex(ctx context.Context, path string) (bleve.Index, error) {
-	var (
-		err   error
-		index bleve.Index
-	)
-	done := make(chan struct{}, 1)
-	defer close(done)
-	log.FromContext(ctx).WithField("path", path).Debug("Loading index")
-	go func() {
-		index, err = bleve.Open(path)
-		done <- struct{}{}
-	}()
-	select {
-	case <-done:
-		if err != nil {
-			return nil, errCannotOpenIndex.WithAttributes("path", path).WithCause(err)
-		}
-		return index, nil
-	case <-ctx.Done():
-		return nil, ctx.Err()
+	z, err := gzip.NewReader(bytes.NewBuffer(compressed))
+	if err != nil {
+		return nil, err
 	}
+	defer z.Close()
+	b, err := ioutil.ReadAll(z)
+	if err != nil {
+		return nil, err
+	}
+	s := &bleveStore{
+		ctx: ctx,
+		dr:  deviceRepository{},
+	}
+	if err := jsonpb.TTN().Unmarshal(b, &s.dr); err != nil {
+		return nil, err
+	}
+
+	if s.index, err = s.dr.makeIndex(ctx); err != nil {
+		return nil, err
+	}
+	return s, nil
 }
