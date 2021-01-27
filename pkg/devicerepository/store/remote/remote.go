@@ -266,6 +266,7 @@ func (s *remoteStore) getCodec(ids *ttnpb.EndDeviceVersionIdentifiers, chooseFil
 		if err := yaml.Unmarshal(b, &codec); err != nil {
 			return nil, err
 		}
+		// TODO: return codec not found error if file is empty
 		if file := chooseFile(codec); file != "" {
 			b, err := s.fetcher.File("vendor", ids.BrandID, file)
 			if err != nil {

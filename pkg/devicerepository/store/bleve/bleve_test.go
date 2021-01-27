@@ -22,6 +22,7 @@ import (
 	"go.thethings.network/lorawan-stack/v3/pkg/devicerepository/store"
 	"go.thethings.network/lorawan-stack/v3/pkg/devicerepository/store/bleve"
 	"go.thethings.network/lorawan-stack/v3/pkg/errors"
+	"go.thethings.network/lorawan-stack/v3/pkg/fetch"
 	"go.thethings.network/lorawan-stack/v3/pkg/ttnpb"
 	"go.thethings.network/lorawan-stack/v3/pkg/util/test"
 	"go.thethings.network/lorawan-stack/v3/pkg/util/test/assertions/should"
@@ -29,14 +30,14 @@ import (
 
 func TestBleve(t *testing.T) {
 	a := assertions.New(t)
-	if err := os.MkdirAll("testdata/data/lorawan-devices-index", 0755); err != nil {
+	if err := os.MkdirAll("testdata", 0755); err != nil {
 		panic(err)
 	}
-	defer os.RemoveAll("testdata/data/lorawan-devices-index")
+	defer os.RemoveAll("testdata")
 	c := bleve.Config{
-		SearchPaths: []string{"testdata/data/lorawan-devices-index"},
+		SearchPaths: []string{"testdata"},
 	}
-	err := c.Initialize(test.Context(), "../remote/testdata", true)
+	err := c.Build(test.Context(), fetch.FromFilesystem("../remote/testdata"))
 	if !a.So(err, should.BeNil) {
 		t.FailNow()
 	}

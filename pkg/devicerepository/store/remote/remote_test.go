@@ -260,7 +260,7 @@ func TestRemoteStore(t *testing.T) {
 						Profiles: map[string]*ttnpb.EndDeviceModel_FirmwareVersion_Profile{
 							"EU_863_870": {
 								CodecID:   "",
-								ProfileID: "full-profile2",
+								ProfileID: "full-profile",
 							},
 							"US_902_928": {
 								CodecID:   "codec",
