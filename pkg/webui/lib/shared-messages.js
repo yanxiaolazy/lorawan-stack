@@ -230,7 +230,7 @@ export default defineMessages({
   model: 'Model',
   moreInformation: 'More information',
   mqtt: 'MQTT',
-  multicast: 'Multicast',
+  multicast: 'Define multicast group (ABP & Multicast)',
   name: 'Name',
   networkServerAddress: 'Network Server address',
   next: 'Next',
