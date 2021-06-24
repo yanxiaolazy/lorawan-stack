@@ -19,6 +19,9 @@ For details about compatibility between different releases, see the **Commitment
   - MQTT clients can subscribe to the topic `v3/{application-id}/devices/{device-id}/down/sent`.
   - For HTTP webhooks, make sure that the **Downlink Sent** messages are enabled.
 - Query for the most recent application messages from the Storage Integration API with the new `last` parameter (for example, `?last=10m` or `?last=2h`). See also `--last` argument for the `ttn-lw-cli applications storage get` and `ttn-lw-cli end-devices storage get` commands.
+- CLI command to generate client configuration for The Things Stack Community Edition and The Things Stack Cloud.
+  - See `ttn-lw-cli use-community --help` for The Things Stack Community Edition.
+  - See `ttn-lw-cli use-cloud --help` for The Things Stack Cloud.
 
 ### Changed
 

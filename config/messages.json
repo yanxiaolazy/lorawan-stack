@@ -1448,6 +1448,15 @@
       "file": "gateways_claim.go"
     }
   },
+  "error:cmd/ttn-lw-cli/commands:invalid_tenant_id": {
+    "translations": {
+      "en": "invalid tenant ID `{tenant_id}`"
+    },
+    "description": {
+      "package": "cmd/ttn-lw-cli/commands",
+      "file": "use.go"
+    }
+  },
   "error:cmd/ttn-lw-cli/commands:join_server_disabled": {
     "translations": {
       "en": "Join Server is disabled"
@@ -1518,6 +1527,15 @@
     "description": {
       "package": "cmd/ttn-lw-cli/commands",
       "file": "clients.go"
+    }
+  },
+  "error:cmd/ttn-lw-cli/commands:no_cluster": {
+    "translations": {
+      "en": "no cluster specified"
+    },
+    "description": {
+      "package": "cmd/ttn-lw-cli/commands",
+      "file": "use.go"
     }
   },
   "error:cmd/ttn-lw-cli/commands:no_collaborator": {
