@@ -11,6 +11,12 @@ For details about compatibility between different releases, see the **Commitment
 
 ### Added
 
+- Attach network identifiers metadata to application uplink messages.
+  - See the new `uplink_message.network_ids.net_id`, `uplink_message.network_ids.cluster_id` and `uplink_message.network_ids.tenant_id` fields. The tenant ID field is only set in multi-tenant deployments.
+  - For The Things Stack Community Edition, the cluster ID is `<region>.cloud.thethings.network`.
+  - For The Things Stack Cloud, the cluster ID is `<region>.cloud.thethings.industries`.
+  - For private deployments, see the new `ns.cluster-id` configuration option.
+
 ### Changed
 
 ### Deprecated
