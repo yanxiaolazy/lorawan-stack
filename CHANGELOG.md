@@ -12,7 +12,7 @@ For details about compatibility between different releases, see the **Commitment
 ### Added
 
 - Email sent to admins when an OAuth client is requested by a non-admin user.
-- Packet Broker UI in the Console (admin only). 
+- Packet Broker UI in the Console (admin only).
 - New config option `--console.oauth.cross-site-cookie` to control access to OAuth state cookie between origins.
   - This option needs to be set to `true` (default is `false`) in multi-cluster deployments in order to support OAuth clients that use POST callbacks.
 
@@ -24,6 +24,8 @@ For details about compatibility between different releases, see the **Commitment
   - A `gs.up.repeat` event is emitted (once per minute maximum) for gateways that are stuck in a loop and forward the same uplink message.
 - For ABP sessions, the CLI now requests a DevAddr from the Network Server instead of generating one from the testing NetID.
 - Descriptions, tooltips and defaults for checkboxes for public gateway status and location in the Console.
+- Increase the default size limit for payload formatter scripts to 32KB (up from 4KB). The maximum size enforced at API level is 40KB (up from 16KB).
+  - For more context see [issue #4053](https://github.com/TheThingsNetwork/lorawan-stack/issues/4053) and [issue #4278](https://github.com/TheThingsNetwork/lorawan-stack/issues/4278).
 
 ### Deprecated
 
