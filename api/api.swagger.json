@@ -15524,6 +15524,7 @@
       "properties": {
         "net_id": {
           "type": "string",
+          "format": "byte",
           "description": "LoRa Alliance NetID."
         },
         "tenant_id": {

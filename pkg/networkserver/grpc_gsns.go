@@ -939,8 +939,8 @@ func (ns *NetworkServer) handleDataUplink(ctx context.Context, up *ttnpb.UplinkM
 					ReceivedAt:      up.ReceivedAt,
 					ConsumedAirtime: up.ConsumedAirtime,
 					NetworkIds: &ttnpb.NetworkIdentifiers{
-						NetId:     ns.networkIdentifiers.NetId,
-						ClusterId: ns.networkIdentifiers.ClusterId,
+						NetId:     &ns.netID,
+						ClusterId: ns.clusterID,
 					},
 				},
 			},

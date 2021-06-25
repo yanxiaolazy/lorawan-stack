@@ -105,9 +105,8 @@ type NetworkServer struct {
 	devices DeviceRegistry
 
 	netID      types.NetID
+	clusterID  string
 	newDevAddr newDevAddrFunc
-
-	networkIdentifiers *ttnpb.NetworkIdentifiers
 
 	applicationServers *sync.Map // string -> *applicationUpStream
 	applicationUplinks ApplicationUplinkQueue
@@ -211,6 +210,7 @@ func New(c *component.Component, conf *Config, opts ...Option) (*NetworkServer, 
 		Component:             c,
 		ctx:                   ctx,
 		netID:                 conf.NetID,
+		clusterID:             conf.ClusterID,
 		newDevAddr:            makeNewDevAddrFunc(devAddrPrefixes...),
 		applicationServers:    &sync.Map{},
 		applicationUplinks:    conf.ApplicationUplinkQueue.Queue,
@@ -224,10 +224,6 @@ func New(c *component.Component, conf *Config, opts ...Option) (*NetworkServer, 
 		uplinkDeduplicator:    conf.UplinkDeduplicator,
 		deviceKEKLabel:        conf.DeviceKEKLabel,
 		downlinkQueueCapacity: conf.DownlinkQueueCapacity,
-		networkIdentifiers: &ttnpb.NetworkIdentifiers{
-			NetId:     conf.NetID.String(),
-			ClusterId: conf.ClusterID,
-		},
 	}
 	ctx = ns.Context()
 
