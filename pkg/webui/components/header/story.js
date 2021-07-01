@@ -51,7 +51,7 @@ const navigationEntries = (
 
 const items = (
   <React.Fragment>
-    <Dropdown.Item title="Profile Settings" icon="settings" path="/profile-settings" />
+    {/* <Dropdown.Item title="Profile Settings" icon="settings" path="/profile-settings" /> */}
     <Dropdown.Item title="Logout" icon="power_settings_new" path="/logout" />
   </React.Fragment>
 )

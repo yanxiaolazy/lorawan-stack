@@ -18,3 +18,10 @@ default: init
 SHELL = bash
 
 include tools/mage/mage.make
+
+build-latest:
+	make init && \
+	tools/bin/mage js:build && \
+	goreleaser release -f .goreleaser.release.yml --snapshot --rm-dist && \
+	docker build -t isrookie/lorawan-stack:latest . && \
+	docker push isrookie/lorawan-stack:latest

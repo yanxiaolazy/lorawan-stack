@@ -150,14 +150,12 @@ const Login = () => {
             className={style.submitButton}
           />
           {enableUserRegistration && (
-            <Button.Link to={`/register${location.search}`} secondary message={m.createAccount} />
+            <a href='https://heltec.org/my-account/' style={{margin: '0 10px'}}>Create an account</a>
           )}
-          <Button.Link
-            naked
-            secondary
-            message={m.forgotPassword}
-            to={`/forgot-password${location.search}`}
-          />
+          <a
+            style={{margin: '0 10px'}}
+            href='https://heltec.org/my-account/lost-password/'
+          >Forgot password?</a>
         </div>
       </Form>
     </div>

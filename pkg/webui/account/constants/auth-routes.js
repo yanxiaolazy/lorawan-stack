@@ -22,11 +22,11 @@ export default [
     exact: true,
     component: Overview,
   },
-  {
-    path: '/profile-settings',
-    exact: true,
-    component: ProfileSettings,
-  },
+  // {
+  //   path: '/profile-settings',
+  //   exact: true,
+  //   component: ProfileSettings,
+  // },
   {
     path: '/code',
     exact: true,

@@ -1,9 +1,9 @@
 FROM alpine AS builder
 
-COPY ttn-lw-stack /bin/ttn-lw-stack
+COPY ./dist/stack_linux_amd64/ttn-lw-stack /bin/ttn-lw-stack
 RUN chmod 755 /bin/ttn-lw-stack
 
-COPY ttn-lw-cli /bin/ttn-lw-cli
+COPY ./dist/cli_linux_amd64/ttn-lw-cli /bin/ttn-lw-cli
 RUN chmod 755 /bin/ttn-lw-cli
 
 COPY data/lorawan-frequency-plans /srv/ttn-lorawan/lorawan-frequency-plans

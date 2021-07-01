@@ -142,12 +142,12 @@ class Header extends Component {
 
     const dropdownItems = (
       <React.Fragment>
-        <Dropdown.Item
+        {/* <Dropdown.Item
           title={sharedMessages.profileSettings}
           icon="user"
           path={`${accountUrl}/profile-settings`}
           external
-        />
+        /> */}
         {mayManageUsers && (
           <Dropdown.Item
             title={sharedMessages.userManagement}
