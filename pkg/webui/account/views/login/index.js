@@ -16,6 +16,7 @@ import React, { useState, useCallback } from 'react'
 import { useLocation } from 'react-router-dom'
 import Query from 'query-string'
 import { defineMessages } from 'react-intl'
+import styled from 'styled-components'
 
 import api from '@account/api'
 
@@ -38,6 +39,15 @@ import sharedMessages from '@ttn-lw/lib/shared-messages'
 import { id as userRegexp } from '@ttn-lw/lib/regexp'
 
 import { selectEnableUserRegistration } from '@account/lib/selectors/app-config'
+
+const Link = styled.a`
+  color: #3d73ff;
+  &:hover,
+  &::active,
+  &::visited {
+    color: #3d73ff;
+  }
+`
 
 const m = defineMessages({
   createAccount: 'Create an account',
@@ -106,7 +116,7 @@ const Login = () => {
   if (location.state && location.state.info) {
     info = location.state.info
   } else if (!next || (next !== appRoot && !Boolean(error))) {
-    info = m.loginToContinue
+    info = 'Please login with Heltec account to contunue'
   } else if ('account-deleted' in Query.parse(location.search)) {
     info = m.accountDeleted
   }
@@ -149,15 +159,23 @@ const Login = () => {
             message={sharedMessages.login}
             className={style.submitButton}
           />
-          {enableUserRegistration && (
-            <a href='https://heltec.org/my-account/' style={{margin: '0 10px'}}>Create an account</a>
-          )}
-          <a
-            style={{margin: '0 10px'}}
-            href='https://heltec.org/my-account/lost-password/'
-          >Forgot password?</a>
         </div>
       </Form>
+      {enableUserRegistration && (
+        <Link href="https://heltec.org/my-account/" style={{ margin: '0 10px' }}>
+          Create an account
+        </Link>
+      )}
+      <Link style={{ margin: '0 10px' }} href="https://heltec.org/my-account/lost-password/">
+        Forgot password?
+      </Link>
+      <Link
+        href="https://heltec-automation-docs.readthedocs.io/en/latest/general/tts_v3_login_issue.html"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        Login issue solution
+      </Link>
     </div>
   )
 }

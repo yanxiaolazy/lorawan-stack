@@ -209,7 +209,7 @@ func (g Go) Quality() {
 }
 
 func init() {
-	preCommitChecks = append(preCommitChecks, Go.Quality)
+	// preCommitChecks = append(preCommitChecks, Go.Quality)
 }
 
 func runGoTest(args ...string) error {

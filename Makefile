@@ -19,9 +19,18 @@ SHELL = bash
 
 include tools/mage/mage.make
 
-build-latest:
+build: build-init build-latest build-version
+
+build-init:
+	@echo "Version is " ${VERSION} && \
 	make init && \
 	tools/bin/mage js:build && \
-	goreleaser release -f .goreleaser.release.yml --snapshot --rm-dist && \
+	goreleaser release -f .goreleaser.release.yml --snapshot --rm-dist
+
+build-latest:
 	docker build -t isrookie/lorawan-stack:latest . && \
 	docker push isrookie/lorawan-stack:latest
+
+build-version:
+	docker build -t isrookie/lorawan-stack:${VERSION} . && \
+	docker push isrookie/lorawan-stack:${VERSION}

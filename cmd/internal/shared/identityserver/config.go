@@ -31,7 +31,7 @@ var DefaultIdentityServerConfig = identityserver.Config{
 		Mount: "/oauth",
 		UI: oauth.UIConfig{
 			TemplateData: webui.TemplateData{
-				SiteName:      "The Things Stack for LoRaWAN",
+				SiteName:      "Heltec LoRaWAN test server based on TTS V3",
 				Title:         "Account",
 				Language:      "en",
 				CanonicalURL:  shared.DefaultOAuthPublicURL,

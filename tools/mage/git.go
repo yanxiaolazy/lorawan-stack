@@ -22,7 +22,7 @@ import (
 type Git mg.Namespace
 
 func (Git) installHook(name string) (err error) {
-return nil
+	return nil
 }
 
 var gitHooks = []string{"pre-commit", "commit-msg", "pre-push"}
@@ -38,19 +38,16 @@ func init() {
 
 // UninstallHooks uninstalls git hooks.
 func (g Git) UninstallHooks() error {
-
 	return nil
 }
 
 func (Git) selectStaged() error {
-	
 	return nil
 }
 
 var preCommitChecks []interface{}
 
 func (g Git) preCommit() error {
-	
 	return nil
 }
 
@@ -77,12 +74,10 @@ var gitCommitPrefixes = []string{
 }
 
 func (Git) commitMsg(messageFile string) error {
-	
 	return nil
 }
 
 func (g Git) prePush(stdin string, args ...string) error {
-	
 	return nil
 }
 
@@ -95,7 +90,6 @@ func (g Git) RunHook() error {
 
 // Diff returns error if `git diff` is not empty
 func (Git) Diff() error {
-	
 	return nil
 }
 
